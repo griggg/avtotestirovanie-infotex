@@ -1,12 +1,14 @@
 from dataclasses import dataclass
 from typing import Optional, List, Dict
 
+""" Результат запроса к хосту """
 @dataclass
 class HostResult:
     host: str
     status_code: Optional[int]
     time: float
 
+""" Статистика по всем запросам к определённому хосту """
 @dataclass
 class HostStat:
     host: str
@@ -23,10 +25,13 @@ class HttpPingStats:
         self._results: Dict[str, List[HostResult]] = {}
 
     def collect(self, results: List[HostResult]):
+        """ Функция группирует запросы в словарь по определённым хостам """
         for result in results:
             self._results.setdefault(result.host, []).append(result)
 
     def get_summary(self) -> List[HostStat]:
+        """ Функция возвращает список статистик по каждому хосту """
+
         summary = []
         for host, results in self._results.items():
             times = [r.time for r in results if r.status_code is not None]
