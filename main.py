@@ -2,7 +2,7 @@ import argparse
 import asyncio
 from ping import HttpPing
 from stats import HttpPingStats
-from printers import StatPrinterConsole, StatPrinterFile  # предположим, что принтеры в файле printers.py
+from printers import StatPrinterConsole, StatPrinterFile
 
 
 def parse_args():
@@ -50,6 +50,9 @@ def main():
         return
 
     count = args.count
+    if count < 1:
+        print(f"Ошибка. count не может быть меньше единицы. {count=}")
+        quit()
 
     stats = HttpPingStats()
     ping = HttpPing(stats)
@@ -61,7 +64,6 @@ def main():
         printer = StatPrinterConsole()
 
     printer.print_summary(stats)
-
 
 if __name__ == '__main__':
     main()
