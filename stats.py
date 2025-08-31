@@ -1,16 +1,11 @@
-import asyncio
-import time
 from dataclasses import dataclass
-from typing import List, Dict, Optional
-import httpx
-
+from typing import Optional, List, Dict
 
 @dataclass
 class HostResult:
     host: str
     status_code: Optional[int]
     time: float
-
 
 @dataclass
 class HostStat:
@@ -21,7 +16,6 @@ class HostStat:
     min: float
     max: float
     avg: float
-
 
 class HttpPingStats:
     def __init__(self):
@@ -50,42 +44,3 @@ class HttpPingStats:
             print(f"  Min    : {min_time:.4f} sec")
             print(f"  Max    : {max_time:.4f} sec")
             print(f"  Avg    : {avg_time:.4f} sec\n")
-
-
-class HttpPing:
-    def __init__(self, stats_collector: HttpPingStats):
-        self.stats_collector = stats_collector
-
-    async def _query(self, client: httpx.AsyncClient, url: str) -> HostResult:
-        try:
-            start = time.perf_counter()
-            response = await client.get(url)
-            end = time.perf_counter()
-            return HostResult(host=url, status_code=response.status_code, time=end - start)
-        except httpx.RequestError:
-            return HostResult(host=url, status_code=None, time=0.0)
-
-    async def ping(self, hosts: List[str], count: int = 5):
-        async with httpx.AsyncClient() as client:
-            tasks = [
-                self._query(client, url)
-                for url in hosts
-                for _ in range(count)
-            ]
-            results = await asyncio.gather(*tasks)
-            self.stats_collector.collect(results)
-
-
-if __name__ == '__main__':
-    hosts = [
-        'https://jsonplaceholder.typicode.com/posts/1',
-        'https://httpbin.org/status/500',
-        'https://nonexistent.url'
-    ]
-    count = 300
-
-    stats = HttpPingStats()
-    ping = HttpPing(stats)
-
-    asyncio.run(ping.ping(hosts, count))
-    stats.print_summary()
