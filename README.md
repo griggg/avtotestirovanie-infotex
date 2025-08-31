@@ -30,3 +30,15 @@ cat results.txt
 
 <img width="1890" height="591" alt="image" src="https://github.com/user-attachments/assets/deecf93a-f361-4f18-b1e0-0107dddd64b5" />
 
+## Файлы, работа программы
+```
+main.py     # запукаемая программа
+ping.py     # содержит класс для создания запросов 
+printers.py # содержит классы для вывода статистики
+stats.py    # содержит класс для подсчёта статистики
+requirements.txt
+README.md
+```
+
+Сделаны все требования, задания. В коде есть комментарии
+
