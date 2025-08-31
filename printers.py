@@ -1,6 +1,7 @@
 from stats import HttpPingStats
 
 
+
 class StatPrinterFile:
     def __init__(self, filename: str = "output.txt"):
         self.filename = filename

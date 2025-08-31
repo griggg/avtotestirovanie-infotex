@@ -4,6 +4,7 @@ from ping import HttpPing
 from stats import HttpPingStats
 from printers import StatPrinterConsole, StatPrinterFile
 
+import re
 
 def parse_args():
     parser = argparse.ArgumentParser(description="HTTP Ping Tool")
@@ -34,8 +35,27 @@ def read_hosts_from_files(file_list_str: str):
                         hosts.append(line)
         except FileNotFoundError:
             print(f"Файл не найден: {file_path}")
+        except IOError as e:
+            print(f"Error reading file {file_path}: {e}")
+        except Exception as e:
+            print(f"Unexpected error with file {file_path}: {e}")
+
     return hosts
 
+
+def is_valid_url(url: str) -> bool:
+    pattern = r'^(https?://)?'  # протокол (опционально)
+    pattern += r'('
+    pattern += r'([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}'  # доменное имя
+    pattern += r'|'
+    pattern += r'localhost'  # localhost
+    pattern += r'|'
+    pattern += r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'  # IPv4
+    pattern += r')'
+    pattern += r'(:\d+)?'  # порт (опционально)
+    pattern += r'(/.*)?$'  # путь (опционально)
+
+    return re.match(pattern, url, re.IGNORECASE) is not None
 
 def main():
     args = parse_args()
@@ -45,8 +65,16 @@ def main():
     else:
         hosts = read_hosts_from_files(args.file)
 
+    validated_hosts = []
+    for i in hosts:
+        if is_valid_url(i):
+            validated_hosts.append(i)
+        else:
+            print(f"[Warning] Некорректный URL: {i} не будет использован")
+    hosts = validated_hosts
+
     if not hosts:
-        print("Не удалось получить список хостов.")
+        print("Список хостов пуст")
         return
 
     count = args.count

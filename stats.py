@@ -18,18 +18,6 @@ class HostStat:
     avg: float
 
 
-# Агрегированная статистика по хосту
-@dataclass
-class HostStat:
-    host: str
-    success: int
-    failed: int
-    errors: int
-    min: float
-    max: float
-    avg: float
-
-
 class HttpPingStats:
     def __init__(self):
         self._results: Dict[str, List[HostResult]] = {}

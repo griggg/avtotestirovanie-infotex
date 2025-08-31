@@ -11,7 +11,7 @@ class HttpPing:
     async def _query(self, client: httpx.AsyncClient, url: str) -> HostResult:
         try:
             start = time.perf_counter()
-            response = await client.get(url)
+            response = await client.get(url, timeout=10.0)
             end = time.perf_counter()
             return HostResult(url, response.status_code, end - start)
         except httpx.RequestError:
