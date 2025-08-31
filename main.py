@@ -1,5 +1,7 @@
 import argparse
 import asyncio
+import sys
+
 from ping import HttpPing
 from stats import HttpPingStats
 from printers import StatPrinterConsole, StatPrinterFile
@@ -44,7 +46,7 @@ def read_hosts_from_files(file_list_str: str):
 
 
 def is_valid_url(url: str) -> bool:
-    pattern = r'^(https?://)?'  # протокол (опционально)
+    pattern = r'^(https?://)'   # протокол (опционально)
     pattern += r'('
     pattern += r'([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}'  # доменное имя
     pattern += r'|'
@@ -75,12 +77,12 @@ def main():
 
     if not hosts:
         print("Список хостов пуст")
-        return
+        sys.exit(1)
 
     count = args.count
     if count < 1:
         print(f"Ошибка. count не может быть меньше единицы. {count=}")
-        quit()
+        sys.exit(1)
 
     stats = HttpPingStats()
     ping = HttpPing(stats)
